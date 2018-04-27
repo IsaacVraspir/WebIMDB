@@ -3,18 +3,20 @@ html(lang="en")
     head
         title= pageTitle
         link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous")
-    body.container.bg-dark.text-light.text-center
-        h1.display-4= pageTitle
-        p.lead= subtitle
-        form(method='POST', action='/search')
-            div.form-row
-                div.col-7
-                    input.form-control(type='text' name='q')
-                div.col-3
-                    select.custom-select#type(name='type')
-                        option(value='tv') TV Shows
-                        option(value='movie') Movies
-                        option(value='actor') Actors
-                        option(value='other') Other
-                div.col-2
-                    button(class='form-control' type='submit' value='Search') Search
+    body.bg-dark.text-light.text-center
+        include nav
+        div.container
+            h1.display-4= pageTitle
+            p.lead= subtitle
+            form(method='POST', action='/search')
+                div.form-row
+                    div.col-7
+                        input.form-control(type='text' name='q')
+                    div.col-3
+                        select.custom-select#type(name='type')
+                            option(value='tv') TV Shows
+                            option(value='movie') Movies
+                            option(value='actor') Actors
+                            option(value='other') Other
+                    div.col-2
+                        button(class='form-control' type='submit' value='Search') Search

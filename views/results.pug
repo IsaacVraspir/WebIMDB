@@ -3,17 +3,18 @@ html(lang="en")
     head
         title= searchTitle
         link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous")
-    body.container.bg-dark.text-light.text-center
-        h1.display-4= searchTitle
-        a.btn.btn-link(href='/')= "Return to homepage"
-        ul.list-group.text-dark
-            each result in results
-                a.list-group-item.list-group-item-action.row(href=result.link)
-                    div.col-auto
-                        //img(src=result.img)
-                    div.col
-                        h1 #{result.name}
-                            br
-                            small #{result.subtitle}
-                        p #{result.description}
-
+    body.bg-dark.text-light.text-center
+        include nav
+        div.container
+            h1.display-4= searchTitle
+            a.btn.btn-link(href='/')= "Return to homepage"
+            ul.list-group.text-dark
+                each result in results
+                    a.list-group-item.list-group-item-action.row(href=result.link)
+                        div.col-auto
+                            //img(src=result.img)
+                        div.col
+                            h1 #{result.name}
+                                br
+                                small #{result.subtitle}
+                            p #{result.description}

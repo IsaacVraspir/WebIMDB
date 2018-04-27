@@ -7,7 +7,7 @@ $(window).on("load", () => {
         $.ajax({
             url: "/image/title/" + id,
             success: (xhr) => {
-                console.log(xhr);
+                titlePosters[i].src = "https://" + xhr.host + xhr.path;
             }
         })
     }
@@ -19,6 +19,9 @@ $(window).on("load", () => {
             url: "/image/person/" + id,
             success: (xhr) => {
                 personPosters[i].src = "https://" + xhr.host + xhr.path;
+            },
+            failure: (xhr) => {
+
             }
         })
     }

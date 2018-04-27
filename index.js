@@ -137,6 +137,15 @@ app.get('/image/title/*', (req, res) => {
     })
 });
 
+app.get('/about*', (req, res) => {
+    let reqPath = req.path.substring(6);
+    if (reqPath) {
+        res.sendFile(__dirname + "/public/about-pages" + reqPath);
+    } else {
+        res.sendFile(__dirname + "/public/about-pages/index.html")
+    }
+});
+
 // Send all other requests to homepage
 app.get('*', (req, res) => {
     res.redirect('/');

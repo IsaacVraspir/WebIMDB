@@ -4,12 +4,14 @@ html(lang="en")
         title= pageTitle
         link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous")
     body.bg-dark.text-light.text-center
+        include nav
         div.container
             div.row
                 div.col-md-6
                     img.person-poster.img-thumbnail.mt-3(
                     title=person.id
-                    src=person.img
+                    src="https://dummyimage.com/214x317/ffffff/000000.jpg&text=Loading"
+                    onerror="this.src=\"https://dummyimage.com/214x317/ffffff/000000.jpg&text=No+Image\""
                     )
                     h2.display-2= pageTitle
                     p.subtitle.text-muted= person.year
