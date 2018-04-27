@@ -1,7 +1,9 @@
+'use strict';
+
 let express = require('express');
 let bodyParser = require('body-parser');
 let sqlite = require('sqlite3').verbose();
-let poster = require('./imdb_poster');
+let poster = require('./public/js/imdb_poster');
 
 let port = 8009;
 let app = express();
@@ -60,6 +62,8 @@ app.post('/search', urlParser, (req, res) => {
             /** @namespace row.genres */
             /** @namespace row.nconst */
             /** @namespace row.tconst */
+            /** @namespace row.death_year */
+            /** @namespace row.birth_year */
 
             // Search was for actors, else media
             if (row.primary_name !== undefined) {
@@ -86,10 +90,31 @@ app.post('/search', urlParser, (req, res) => {
 });
 
 app.get('/people/*', (req, res) => {
+    let id = req.path.split('/')[2];
+    db.get("SELECT * FROM Names WHERE nconst LIKE ?", id, (err, row) => {
+        if (err) return err;
 
+        /** @namespace row.primary_professions */
+        /** @namespace row.known_for_titles */
+
+        let data = {
+            "year": row.birth_year + " - " + (row.death_year || "present"),
+            "profession": row.primary_profession.replace(/,/g, ', '),
+            "img": poster.GetPosterFromNameId(id)
+        };
+
+        let knownFor = row.known_for_titles.split(',');
+
+        res.render('people', {pageTitle: row.primary_name, person: data, movies: knownFor});
+    });
 });
 
 app.get('/titles/*', (req, res) => {
+
+});
+
+app.get('/json/title/*', (req, res) => {
+    let id = req.path.split('/')[3];
 
 });
 

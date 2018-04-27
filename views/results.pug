@@ -8,9 +8,12 @@ html(lang="en")
         a.btn.btn-link(href='/')= "Return to homepage"
         ul.list-group.text-dark
             each result in results
-                a.list-group-item.list-group-item-action(href=result.link)
-                    h1 #{result.name}
-                        br
-                        small #{result.subtitle}
-                    p #{result.description}
+                a.list-group-item.list-group-item-action.row(href=result.link)
+                    div.col-auto
+                        //img(src=result.img)
+                    div.col
+                        h1 #{result.name}
+                            br
+                            small #{result.subtitle}
+                        p #{result.description}
 

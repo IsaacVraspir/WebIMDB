@@ -1,22 +1,24 @@
-var https = require('https');
-var url = require('url');
+"use strict";
+
+let https = require('https');
+let url = require('url');
 
 function GetPosterFromNameId(name_id, callback) {
-    var req_url = {
+    let req_url = {
         host: 'www.imdb.com',
         path: '/name/' + name_id + '/'
     };
-    var req = https.request(req_url, (res) => {
-        var body = '';
+    let req = https.request(req_url, (res) => {
+        let body = '';
         res.on('data', (chunk) => {
             body += chunk;
         });
         res.on('end', () => {
-            var poster_link_pos = body.indexOf('<a href="/name/' + name_id + '/mediaviewer/');
-            var poster_img_pos = body.indexOf('<img', poster_link_pos);
-            var poster_src_pos = body.indexOf('src=', poster_img_pos) + 5;
-            var poster_end_pos = body.indexOf('"', poster_src_pos);
-            var poster_url = url.parse(body.substring(poster_src_pos, poster_end_pos));
+            let poster_link_pos = body.indexOf('<a href="/name/' + name_id + '/mediaviewer/');
+            let poster_img_pos = body.indexOf('<img', poster_link_pos);
+            let poster_src_pos = body.indexOf('src=', poster_img_pos) + 5;
+            let poster_end_pos = body.indexOf('"', poster_src_pos);
+            let poster_url = url.parse(body.substring(poster_src_pos, poster_end_pos));
             if (poster_url.host !== null)
                 callback && callback(null, {host: poster_url.host, path: poster_url.pathname});
             else
@@ -39,21 +41,21 @@ function GetPosterFromNameId(name_id, callback) {
 }
 
 function GetPosterFromTitleId(title_id, callback) {
-    var req_url = {
+    let req_url = {
         host: 'www.imdb.com',
         path: '/title/' + title_id + '/'
     };
-    var req = https.request(req_url, (res) => {
-        var body = '';
+    let req = https.request(req_url, (res) => {
+        let body = '';
         res.on('data', (chunk) => {
             body += chunk;
         });
         res.on('end', () => {
-            var poster_link_pos = body.indexOf('<a href="/title/' + title_id + '/mediaviewer/');
-            var poster_img_pos = body.indexOf('<img', poster_link_pos);
-            var poster_src_pos = body.indexOf('src=', poster_img_pos) + 5;
-            var poster_end_pos = body.indexOf('"', poster_src_pos);
-            var poster_url = url.parse(body.substring(poster_src_pos, poster_end_pos));
+            let poster_link_pos = body.indexOf('<a href="/title/' + title_id + '/mediaviewer/');
+            let poster_img_pos = body.indexOf('<img', poster_link_pos);
+            let poster_src_pos = body.indexOf('src=', poster_img_pos) + 5;
+            let poster_end_pos = body.indexOf('"', poster_src_pos);
+            let poster_url = url.parse(body.substring(poster_src_pos, poster_end_pos));
             if (poster_url.host !== null)
                 callback && callback(null, {host: poster_url.host, path: poster_url.pathname});
             else
@@ -67,6 +69,7 @@ function GetPosterFromTitleId(title_id, callback) {
 
     req.on('timeout', () => {
         callback && callback('timeout', null);
+        callback = null;
         req.abort();
     });
 

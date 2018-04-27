@@ -4,17 +4,22 @@ html(lang="en")
         title= pageTitle
         link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous")
     body.container.bg-dark.text-light.text-center
-        h1.display-4= pageTitle
-        p.lead= subtitle
-        form(method='POST', action='/search')
-            div.form-row
-                div.col-7
-                    input.form-control(type='text' name='q')
-                div.col-3
-                    select.custom-select#type(name='type')
-                        option(value='tv') TV Shows
-                        option(value='movie') Movies
-                        option(value='actor') Actors
-                        option(value='other') Other
-                div.col-2
-                    button(class='form-control' type='submit' value='Search') Search
+        div.row
+            div.col-md-6
+                img(src=person.img)
+                h1.display-4= pageTitle
+                p.subtitle.text-muted= person.year
+                p.subtitle= person.profession
+            div.col-md-6
+                ul.list-group.text-dark.mt-4
+                    each movie in movies
+                        a.list-group-item.list-group-item-action.title-item.row(title= movie)
+                            h4= movie.primary_title
+                            p.text-muted= start_year
+        script(
+        src="https://code.jquery.com/jquery-3.3.1.min.js",
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=",
+        crossorigin="anonymous"
+        )
+        script
+            include  ../public/js/load_titles.js
