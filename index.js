@@ -5,7 +5,7 @@ let bodyParser = require('body-parser');
 let sqlite = require('sqlite3').verbose();
 let poster = require('./public/js/imdb_poster');
 
-let port = 8009;
+let port = 8023;
 let app = express();
 let urlParser = bodyParser.urlencoded({extended: true});
 let db = new sqlite.Database('imdb.sqlite3', (err) => {
@@ -65,7 +65,7 @@ app.post('/search', urlParser, (req, res) => {
             /** @namespace row.death_year */
             /** @namespace row.birth_year */
 
-            // Search was for actors, else media
+            // Search was for actors, else titles
             if (row.primary_name !== undefined) {
                 let item = {
                     'name': row.primary_name,
@@ -79,7 +79,7 @@ app.post('/search', urlParser, (req, res) => {
                     'name': row.primary_title,
                     'subtitle': row.start_year + " - " + (row.end_year || "present"),
                     'description': (row.genres || "").replace(',', ', '),
-                    'link': '/media/' + row.tconst,
+                    'link': '/titles/' + row.tconst,
                 };
                 data.push(item);
             }
@@ -111,7 +111,60 @@ app.get('/people/*', (req, res) => {
 });
 
 app.get('/titles/*', (req, res) => {
+	let id = req.path.split('/')[2];
 
+	db.get("SELECT * FROM Titles WHERE tconst LIKE ?", id, (err, row) => {
+		if (err) return err;
+
+		/** @namespace row.genres */
+
+
+		let data = {
+			"id": row.tconst,
+			"Type": row.title_type,
+			"PrimaryTitle": row.primary_title,
+			"OriginalTitle": row.orignal_title,
+			"Release": row.start_year + " - " + row.end_year,
+			"Length": row.runtime_minutes,
+			"img": poster.GetPosterFromTitleId(id)
+		}
+		let genre_list = row.genres.split(',');
+		let primary_title = row.primary_title;
+
+		let ratings_list = [];
+		db.get("SELECT * FROM Ratings WHERE tconst LIKE ?", id, (err, row) => {
+			if (err) return err;
+
+			let ratings_list = {
+				"ave": row.average_rating,
+				"votes": row.num_votes
+			}
+
+
+		let principles_list = {};
+		db.get("SELECT * FROM Principals WHERE tconst LIKE ? ORDER BY ordering", id, (err, row) => {
+
+			principles_list = {
+				"order": row.ordering,
+				"number": row.nconst,
+				"job": row.category,
+				"characters": row.characters
+			}
+			db.get("SELECT * FROM Names WHERE nconst LIKE ?", row.nconst, (err, row) => {
+				if (err) return err;
+				principles_list["name"] = row.primary_name;
+
+
+		db.get("SELECT * FROM Crew WHERE tconst LIKE ?", id, (err, row) => {
+			let crew_directors = row.directors.split(',');
+			let crew_writers = row.writers.split(',');
+
+		res.render('titles', {pageTitle: primary_title, titles: data, genres: genre_list, ratings: ratings_list, principles: principles_list, directors: crew_directors, writers: crew_writers});
+		});
+		});
+		});
+		});
+	});
 });
 
 app.get('/json/title/*', (req, res) => {
@@ -138,12 +191,12 @@ app.get('/image/title/*', (req, res) => {
 });
 
 app.get('/about*', (req, res) => {
-    let reqPath = req.path.substring(6);
-    if (reqPath) {
-        res.sendFile(__dirname + "/public/about-pages" + reqPath);
-    } else {
-        res.sendFile(__dirname + "/public/about-pages/index.html")
-    }
+	let reqPath = req.path.substring(6);
+	if (reqPath) {
+		res.sendFile(__dirname + "/public/about-pages" + reqPath);
+	} else {
+		res.sendFile(__dirname + "/public/about-pages/index.html");
+	}
 });
 
 // Send all other requests to homepage
