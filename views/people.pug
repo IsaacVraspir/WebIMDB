@@ -3,19 +3,26 @@ html(lang="en")
     head
         title= pageTitle
         link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous")
-    body.container.bg-dark.text-light.text-center
-        div.row
-            div.col-md-6
-                img(src=person.img)
-                h1.display-4= pageTitle
-                p.subtitle.text-muted= person.year
-                p.subtitle= person.profession
-            div.col-md-6
-                ul.list-group.text-dark.mt-4
-                    each movie in movies
-                        a.list-group-item.list-group-item-action.title-item.row(title= movie)
-                            h4= movie.primary_title
-                            p.text-muted= start_year
+    body.bg-dark.text-light.text-center
+        div.container
+            div.row
+                div.col-md-6
+                    img.person-poster.img-thumbnail.mt-3(
+                    title=person.id
+                    src=person.img
+                    )
+                    h2.display-2= pageTitle
+                    p.subtitle.text-muted= person.year
+                    p.subtitle= person.profession
+                div.col-md-6
+                    h4.display-4 Known for:
+                    ul.list-group.text-dark
+                        each movie in movies
+                            a.list-group-item.list-group-item-action.title-item.row(
+                            title= movie
+                            href= "/titles/" + movie)
+                                h4 Loading...
+                                p.text-muted Loading...
         script(
         src="https://code.jquery.com/jquery-3.3.1.min.js",
         integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=",
@@ -23,3 +30,5 @@ html(lang="en")
         )
         script
             include  ../public/js/load_titles.js
+        script
+            include  ../public/js/load_poster.js

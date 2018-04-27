@@ -98,6 +98,7 @@ app.get('/people/*', (req, res) => {
         /** @namespace row.known_for_titles */
 
         let data = {
+            "id": row.nconst,
             "year": row.birth_year + " - " + (row.death_year || "present"),
             "profession": row.primary_profession.replace(/,/g, ', '),
             "img": poster.GetPosterFromNameId(id)
@@ -115,7 +116,25 @@ app.get('/titles/*', (req, res) => {
 
 app.get('/json/title/*', (req, res) => {
     let id = req.path.split('/')[3];
+    db.get("SELECT * FROM Titles WHERE tconst == ?", id, (err, row) => {
+        res.json(row);
+    })
+});
 
+app.get('/image/person/*', (req, res) => {
+    let id = req.path.split('/')[3];
+    poster.GetPosterFromNameId(id, (err, data) => {
+        if (err) console.error(err);
+        res.json(data);
+    })
+});
+
+app.get('/image/title/*', (req, res) => {
+    let id = req.path.split('/')[3];
+    poster.GetPosterFromTitleId(id, (err, data) => {
+        if (err) console.error(err);
+        res.json(data);
+    })
 });
 
 // Send all other requests to homepage
