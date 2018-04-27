@@ -1,0 +1,11 @@
+doctype html
+html(lang="en")
+    head
+        title= searchTitle
+        link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous")
+    body.container.bg-dark.text-light.text-center
+        h1= searchTitle
+        a.btn.btn-link(href='/')= "Return to homepage"
+        mixin results
+            ui
+                li

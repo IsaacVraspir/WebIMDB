@@ -1,4 +1,4 @@
-var http = require('http');
+var https = require('https');
 var url = require('url');
 
 function GetPosterFromNameId(name_id, callback) {
@@ -6,7 +6,7 @@ function GetPosterFromNameId(name_id, callback) {
         host: 'www.imdb.com',
         path: '/name/' + name_id + '/'
     };
-    var req = http.request(req_url, (res) => {
+    var req = https.request(req_url, (res) => {
         var body = '';
         res.on('data', (chunk) => {
             body += chunk;
@@ -43,7 +43,7 @@ function GetPosterFromTitleId(title_id, callback) {
         host: 'www.imdb.com',
         path: '/title/' + title_id + '/'
     };
-    var req = http.request(req_url, (res) => {
+    var req = https.request(req_url, (res) => {
         var body = '';
         res.on('data', (chunk) => {
             body += chunk;
