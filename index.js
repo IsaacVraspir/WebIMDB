@@ -206,15 +206,36 @@ app.get('/edit/people/*', (req,res) => {
 
         let data = {
             "id": row.nconst,
-            "year": row.birth_year + " - " + (row.death_year || "present"),
+            "birth_year": row.birth_year,
+            "death_year": (row.death_year || ""),
             "profession": row.primary_profession.replace(/,/g, ', '),
             "img": poster.GetPosterFromNameId(id)
         };
 
         let knownFor = row.known_for_titles.split(',');
 
-        res.render('people', {pageTitle: row.primary_name, person: data, movies: knownFor});
+        res.render('edit_people', {pageTitle: row.primary_name, person: data, movies: knownFor});
     });
+});
+
+app.post('/edit/people/*', urlParser, (req, res) => {
+    let id = req.path.split('/')[3];
+    let birth = parseInt(req.body.birth);
+    let death = parseInt(req.body.death);
+    let professions = [];
+    req.body.jobs.forEach((item) => {
+        professions.push(item);
+    });
+
+    if (birth) {
+        db.run("UPDATE Names SET birth_year = ? WHERE nconst == ?", birth, id);
+    }
+    if (death) {
+        db.run("UPDATE Names SET death_year = ? WHERE nconst == ?", death, id);
+    }
+    if (professions) {
+        db.run("UPDATE Names SET primary_profession = ? WHERE nconst == ?", professions.toString(), id);
+    }
 });
 
 app.get('/edit/title/*', (req,res) => {

@@ -5,26 +5,69 @@ html(lang="en")
         link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous")
     body.bg-dark.text-light.text-center
         include nav
-        div.container
-            div.row
-                div.col-md-6
-                    img.person-poster.img-thumbnail.mt-3(
-                    title=person.id
-                    src="https://dummyimage.com/214x317/ffffff/000000.jpg&text=Loading"
-                    onerror="this.src=\"https://dummyimage.com/214x317/ffffff/000000.jpg&text=No+Image\""
-                    )
-                    h2.display-2= pageTitle
-                    p.subtitle.text-muted= person.year
-                    p.subtitle= person.profession
-                div.col-md-6
-                    h4.display-4 Known for:
-                    ul.list-group.text-dark
-                        each movie in movies
-                            a.list-group-item.list-group-item-action.title-item.row(
-                            title= movie
-                            href= "/titles/" + movie)
-                                h4 Loading...
-                                p.text-muted Loading...
+        form(method="POST")
+            div.container
+                div.row
+                    div.col-md-6
+                        img.person-poster.img-thumbnail.mt-3(
+                        title=person.id
+                        src="https://dummyimage.com/214x317/ffffff/000000.jpg&text=Loading"
+                        onerror="this.src=\"https://dummyimage.com/214x317/ffffff/000000.jpg&text=No+Image\""
+                        )
+                        h2.display-2= pageTitle
+                        input.form-control(name="birth" value= person.birth_year)
+                        input.form-control(name="death" value= person.death_year || "present")
+                        select.custom-select(name="jobs" multiple)
+                            option(value="actor") Actor
+                            option(value="actress") Actress
+                            option(value="animation_department") Animation Department
+                            option(value="art_department") Art Department
+                            option(value="art_director") Art Director
+                            option(value="assistant") Assistant
+                            option(value="assistant_director") Assistant Director
+                            option(value="camera_department") Camera Department
+                            option(value="casting_department") Casting Department
+                            option(value="casting_director") Casting Director
+                            option(value="cinematographer") Cinematographer
+                            option(value="composer") Composer
+                            option(value="costume_department") Costume Department
+                            option(value="costume_designer") Costume Designer
+                            option(value="director") Director
+                            option(value="editor") Editor
+                            option(value="editorial_department") Editorial Department
+                            option(value="Executive") Executive
+                            option(value="legal") Legal
+                            option(value="location_management") Location Management
+                            option(value="make_up_artist") Makeup Artist
+                            option(value="manager") Manager
+                            option(value="miscellaneous") Misc.
+                            option(value="music_department") Music Department
+                            option(value="producer") Producer
+                            option(value="production_designer") Production Designer
+                            option(value="production_manager") Production Manager
+                            option(value="publicist") Publicist
+                            option(value="set_decorator") Set Decorator
+                            option(value="sound_department") Sound Department
+                            option(value="soundtrack") Soundtrack
+                            option(value="special_effects") SFX
+                            option(value="stunts") Stunts
+                            option(value="talent_agent") Talent Agent
+                            option(value="transportation_department") Transportation
+                            option(value="visual_effects") Visual SFX
+                            option(value="writer") Writer
+                        p.subtitle= person.profession
+                    div.col-md-6
+                        h4.display-4 Known for:
+                        ul.list-group.text-dark
+                            each movie in movies
+                                a.list-group-item.list-group-item-action.title-item.row(
+                                title= movie
+                                href= "/titles/" + movie)
+                                    h4 Loading...
+                                    p.text-muted Loading...
+                div.row
+                    div.col-12
+                        button.btn.btn-lg.btn-block.btn-danger Submit
         script(
         src="https://code.jquery.com/jquery-3.3.1.min.js",
         integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=",

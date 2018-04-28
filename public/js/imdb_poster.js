@@ -1,37 +1,41 @@
-"use strict";
-
-let https = require('https');
-let url = require('url');
+var https = require('https');
+var url = require('url');
 
 function GetPosterFromNameId(name_id, callback) {
-    let req_url = {
+    var req_url = {
         host: 'www.imdb.com',
         path: '/name/' + name_id + '/'
     };
-    let req = https.request(req_url, (res) => {
-        let body = '';
+    var req = https.request(req_url, (res) => {
+        var body = '';
         res.on('data', (chunk) => {
             body += chunk;
         });
         res.on('end', () => {
-            let poster_link_pos = body.indexOf('<a href="/name/' + name_id + '/mediaviewer/');
-            let poster_img_pos = body.indexOf('<img', poster_link_pos);
-            let poster_src_pos = body.indexOf('src=', poster_img_pos) + 5;
-            let poster_end_pos = body.indexOf('"', poster_src_pos);
-            let poster_url = url.parse(body.substring(poster_src_pos, poster_end_pos));
-            if (poster_url.host !== null)
+            var poster_link_pos = body.indexOf('<a href="/name/' + name_id + '/mediaviewer/');
+            var poster_img_pos = body.indexOf('<img', poster_link_pos);
+            var poster_src_pos = body.indexOf('src=', poster_img_pos) + 5;
+            var poster_end_pos = body.indexOf('"', poster_src_pos);
+            var poster_url = url.parse(body.substring(poster_src_pos, poster_end_pos));
+            if (poster_url.host !== null) {
                 callback && callback(null, {host: poster_url.host, path: poster_url.pathname});
-            else
+                callback = null;
+            }
+            else {
                 callback && callback('poster not found', null);
+                callback = null;
+            }
         });
     });
 
     req.on('error', (err) => {
         callback && callback(err, null);
+        callback = null;
     });
 
     req.on('timeout', () => {
         callback && callback('timeout', null);
+        callback = null;
         req.abort();
     });
 
@@ -41,30 +45,35 @@ function GetPosterFromNameId(name_id, callback) {
 }
 
 function GetPosterFromTitleId(title_id, callback) {
-    let req_url = {
+    var req_url = {
         host: 'www.imdb.com',
         path: '/title/' + title_id + '/'
     };
-    let req = https.request(req_url, (res) => {
-        let body = '';
+    var req = https.request(req_url, (res) => {
+        var body = '';
         res.on('data', (chunk) => {
             body += chunk;
         });
         res.on('end', () => {
-            let poster_link_pos = body.indexOf('<a href="/title/' + title_id + '/mediaviewer/');
-            let poster_img_pos = body.indexOf('<img', poster_link_pos);
-            let poster_src_pos = body.indexOf('src=', poster_img_pos) + 5;
-            let poster_end_pos = body.indexOf('"', poster_src_pos);
-            let poster_url = url.parse(body.substring(poster_src_pos, poster_end_pos));
-            if (poster_url.host !== null)
+            var poster_link_pos = body.indexOf('<a href="/title/' + title_id + '/mediaviewer/');
+            var poster_img_pos = body.indexOf('<img', poster_link_pos);
+            var poster_src_pos = body.indexOf('src=', poster_img_pos) + 5;
+            var poster_end_pos = body.indexOf('"', poster_src_pos);
+            var poster_url = url.parse(body.substring(poster_src_pos, poster_end_pos));
+            if (poster_url.host !== null) {
                 callback && callback(null, {host: poster_url.host, path: poster_url.pathname});
-            else
+                callback = null;
+            }
+            else {
                 callback && callback('poster not found', null);
+                callback = null;
+            }
         });
     });
 
     req.on('error', (err) => {
         callback && callback(err, null);
+        callback = null;
     });
 
     req.on('timeout', () => {
