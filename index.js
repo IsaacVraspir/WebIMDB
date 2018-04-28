@@ -37,11 +37,11 @@ app.post('/search', urlParser, (req, res) => {
     switch (type) {
         case 'actor':
             sql = "SELECT * FROM Names WHERE primary_name LIKE ? LIMIT 100";
-            params.push('%' + search + '%');
+            params.push(search.replace(/\*/g, '%'));
             break;
         default:
             sql = "SELECT * FROM Titles WHERE primary_title LIKE ? AND title_type is ? LIMIT 100";
-            params.push('%' + search + '%');
+            params.push(search.replace(/\*/g, '%'));
             params.push(type);
             break;
     }
@@ -190,7 +190,7 @@ app.get('/titles/*', (req, res) => {
     });
 });
 
-app.get('/edit/people/*', (req,res) => {
+app.get('/edit/people/*', (req, res) => {
     let id = req.path.split('/')[3];
     db.get("SELECT * FROM Names WHERE nconst LIKE ?", id, (err, row) => {
         if (err) return err;
@@ -238,7 +238,7 @@ app.post('/edit/people/*', urlParser, (req, res) => {
     }
 });
 
-app.get('/edit/title/*', (req,res) => {
+app.get('/edit/title/*', (req, res) => {
 
 });
 
