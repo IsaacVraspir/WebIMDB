@@ -5,7 +5,7 @@ let bodyParser = require('body-parser');
 let sqlite = require('sqlite3').verbose();
 let poster = require('./public/js/imdb_poster');
 
-let port = 8023;
+let port = 8009;
 let app = express();
 let urlParser = bodyParser.urlencoded({extended: true});
 let db = new sqlite.Database('imdb.sqlite3', (err) => {
@@ -97,6 +97,12 @@ app.get('/people/*', (req, res) => {
         /** @namespace row.primary_professions */
         /** @namespace row.known_for_titles */
 
+        if (!row) {
+            res.render('404');
+            res.end();
+            return;
+        }
+
         let data = {
             "id": row.nconst,
             "year": row.birth_year + " - " + (row.death_year || "present"),
@@ -111,65 +117,120 @@ app.get('/people/*', (req, res) => {
 });
 
 app.get('/titles/*', (req, res) => {
-	let id = req.path.split('/')[2];
+    let id = req.path.split('/')[2];
 
-	db.get("SELECT * FROM Titles WHERE tconst LIKE ?", id, (err, row) => {
-		if (err) return err;
+    db.get("SELECT * FROM Titles WHERE tconst LIKE ?", id, (err, row) => {
+        if (err || !row) return err;
 
-		/** @namespace row.genres */
+        /** @namespace row.genres */
+
+        let year = (row.start_year);
+
+        if (row.end_year) year += " - " + row.end_year;
+
+        let data = {
+            "id": row.tconst,
+            "Type": row.title_type,
+            "PrimaryTitle": row.primary_title,
+            "OriginalTitle": row.orignal_title,
+            "Release": year,
+            "Length": row.runtime_minutes,
+            "img": poster.GetPosterFromTitleId(id)
+        };
+        let genre_list = row.genres.split(',');
+        let primary_title = row.primary_title;
+
+        let ratings_list = [];
+        db.get("SELECT * FROM Ratings WHERE tconst LIKE ?", id, (err, row) => {
+            if (err) return err;
+
+            if (!row) {
+                let ratings_list = {
+                    "ave": "?",
+                    "votes": "?"
+                }
+            } else {
+                let ratings_list = {
+                    ave: row.average_rating,
+                    votes: row.num_votes
+                };
+            }
+
+            let principles_list = {};
+            db.get("SELECT * FROM Principals WHERE tconst LIKE ? ORDER BY ordering", id, (err, row) => {
+
+                principles_list = {
+                    "order": row.ordering,
+                    "number": row.nconst,
+                    "job": row.category,
+                    "characters": row.characters
+                }
+                db.get("SELECT * FROM Names WHERE nconst LIKE ?", row.nconst, (err, row) => {
+                    if (err) return err;
+                    principles_list["name"] = row.primary_name;
 
 
-		let data = {
-			"id": row.tconst,
-			"Type": row.title_type,
-			"PrimaryTitle": row.primary_title,
-			"OriginalTitle": row.orignal_title,
-			"Release": row.start_year + " - " + row.end_year,
-			"Length": row.runtime_minutes,
-			"img": poster.GetPosterFromTitleId(id)
-		}
-		let genre_list = row.genres.split(',');
-		let primary_title = row.primary_title;
+                    db.get("SELECT * FROM Crew WHERE tconst LIKE ?", id, (err, row) => {
+                        let crew_directors = row.directors.split(',');
+                        let crew_writers = row.writers.split(',');
 
-		let ratings_list = [];
-		db.get("SELECT * FROM Ratings WHERE tconst LIKE ?", id, (err, row) => {
-			if (err) return err;
+                        res.render('titles', {
+                            pageTitle: primary_title,
+                            titles: data,
+                            genres: genre_list,
+                            ratings: ratings_list,
+                            principles: principles_list,
+                            directors: crew_directors,
+                            writers: crew_writers
+                        });
+                    });
+                });
+            });
+        });
+    });
+});
 
-			let ratings_list = {
-				"ave": row.average_rating,
-				"votes": row.num_votes
-			}
+app.get('/edit/people/*', (req,res) => {
+    let id = req.path.split('/')[3];
+    db.get("SELECT * FROM Names WHERE nconst LIKE ?", id, (err, row) => {
+        if (err) return err;
 
+        /** @namespace row.primary_professions */
+        /** @namespace row.known_for_titles */
 
-		let principles_list = {};
-		db.get("SELECT * FROM Principals WHERE tconst LIKE ? ORDER BY ordering", id, (err, row) => {
+        if (!row) {
+            res.render('404');
+            res.end();
+            return;
+        }
 
-			principles_list = {
-				"order": row.ordering,
-				"number": row.nconst,
-				"job": row.category,
-				"characters": row.characters
-			}
-			db.get("SELECT * FROM Names WHERE nconst LIKE ?", row.nconst, (err, row) => {
-				if (err) return err;
-				principles_list["name"] = row.primary_name;
+        let data = {
+            "id": row.nconst,
+            "year": row.birth_year + " - " + (row.death_year || "present"),
+            "profession": row.primary_profession.replace(/,/g, ', '),
+            "img": poster.GetPosterFromNameId(id)
+        };
 
+        let knownFor = row.known_for_titles.split(',');
 
-		db.get("SELECT * FROM Crew WHERE tconst LIKE ?", id, (err, row) => {
-			let crew_directors = row.directors.split(',');
-			let crew_writers = row.writers.split(',');
+        res.render('people', {pageTitle: row.primary_name, person: data, movies: knownFor});
+    });
+});
 
-		res.render('titles', {pageTitle: primary_title, titles: data, genres: genre_list, ratings: ratings_list, principles: principles_list, directors: crew_directors, writers: crew_writers});
-		});
-		});
-		});
-		});
-	});
+app.get('/edit/title/*', (req,res) => {
+
 });
 
 app.get('/json/title/*', (req, res) => {
     let id = req.path.split('/')[3];
     db.get("SELECT * FROM Titles WHERE tconst == ?", id, (err, row) => {
+        res.json(row);
+    })
+});
+
+app.get('/json/person/*', (req, res) => {
+    let id = req.path.split('/')[3];
+    db.get("SELECT * FROM Names WHERE nconst == ?", id, (err, row) => {
         res.json(row);
     })
 });
@@ -191,12 +252,12 @@ app.get('/image/title/*', (req, res) => {
 });
 
 app.get('/about*', (req, res) => {
-	let reqPath = req.path.substring(6);
-	if (reqPath) {
-		res.sendFile(__dirname + "/public/about-pages" + reqPath);
-	} else {
-		res.sendFile(__dirname + "/public/about-pages/index.html");
-	}
+    let reqPath = req.path.substring(6);
+    if (reqPath) {
+        res.sendFile(__dirname + "/public/about-pages" + reqPath);
+    } else {
+        res.sendFile(__dirname + "/public/about-pages/index.html");
+    }
 });
 
 // Send all other requests to homepage

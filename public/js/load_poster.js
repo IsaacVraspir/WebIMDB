@@ -7,6 +7,10 @@ $(window).on("load", () => {
         $.ajax({
             url: "/image/title/" + id,
             success: (xhr) => {
+                if (!xhr) {
+                    titlePosters[i].src = "";
+                    return;
+                }
                 titlePosters[i].src = "https://" + xhr.host + xhr.path;
             }
         })

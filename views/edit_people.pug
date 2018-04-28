@@ -1,0 +1,36 @@
+doctype html
+html(lang="en")
+    head
+        title= pageTitle
+        link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous")
+    body.bg-dark.text-light.text-center
+        include nav
+        div.container
+            div.row
+                div.col-md-6
+                    img.person-poster.img-thumbnail.mt-3(
+                    title=person.id
+                    src="https://dummyimage.com/214x317/ffffff/000000.jpg&text=Loading"
+                    onerror="this.src=\"https://dummyimage.com/214x317/ffffff/000000.jpg&text=No+Image\""
+                    )
+                    h2.display-2= pageTitle
+                    p.subtitle.text-muted= person.year
+                    p.subtitle= person.profession
+                div.col-md-6
+                    h4.display-4 Known for:
+                    ul.list-group.text-dark
+                        each movie in movies
+                            a.list-group-item.list-group-item-action.title-item.row(
+                            title= movie
+                            href= "/titles/" + movie)
+                                h4 Loading...
+                                p.text-muted Loading...
+        script(
+        src="https://code.jquery.com/jquery-3.3.1.min.js",
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=",
+        crossorigin="anonymous"
+        )
+        script
+            include  ../public/js/load_titles.js
+        script
+            include  ../public/js/load_poster.js

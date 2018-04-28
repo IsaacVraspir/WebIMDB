@@ -4,12 +4,14 @@ html(lang="en")
         title= pageTitle
         link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous")
     body.bg-dark.text-light.text-center
+        include nav
         div.container
             div.row
-                div.col-md-6
+                div.col-lg-6
                     img.title-poster.img-thumbnail.mt-3(
                     title=titles.id
-                    src=titles.img
+                    src="https://dummyimage.com/214x317/ffffff/000000.jpg&text=Loading"
+                    onerror="this.src=\"https://dummyimage.com/214x317/ffffff/000000.jpg&text=No+Image\""
                     )
                     h2.display-2= pageTitle
                     p.subtitle= "Type: " + titles.Type
@@ -19,25 +21,28 @@ html(lang="en")
                     p.subtitle= "Average rating: " + ratings.ave
                     p.subtitle= "Number of votes: " + ratings.votes
                     p.subtitle= "Top paid cast: " + principles.name
-                div.col-md-6
-                    h4.display-4 Director(s):
-                    ul.list-group.text-dark
-                        each director in directors
-                            a.list-group-item.list-group-item-action.title-item.row(
-                                name= director
-                                href= "/people/" + director)
-                dib.col-md-6
+                dib.col-lg-6
                     h4.display-4 Writer(s):
                         each writer in writers
-                            a.list-group-item.list-group-item-action.title-item.row(
-                                name= writer
-                                href= "/people/" + writer)
+                            a.list-group-item.list-group-item-action.person-item.row(
+                            name= writer
+                            href= "/people/" + writer)
+                                h4 Loading...
+                                p.text-muted Loading...
+                    h4.display-4 Director(s):
+                        ul.list-group.text-dark
+                            each director in directors
+                                a.list-group-item.list-group-item-action.person-item.row(
+                                name= director
+                                href= "/people/" + director)
+                                    h4 Loading...
+                                    p.text-muted Loading...
         script(
         src="https://code.jquery.com/jquery-3.3.1.min.js",
         integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=",
         crossorigin="anonymous"
         )
         script
-            include  ../public/js/load_titles.js
+            include  ../public/js/load_people.js
         script
             include  ../public/js/load_poster.js
